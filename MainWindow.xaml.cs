@@ -16,10 +16,10 @@ namespace memoriajatek
     /// </summary>
     public partial class MainWindow : Window
     {
-        List<string> size = ["2 x 2", "4 x 4", "6 x 6"];
-        List<int> nums = [];
-        List<Button> pressed = [];
-        int clicked = 0;
+        private List<string> size = ["2 x 2", "4 x 4", "6 x 6"];
+        private List<int> nums = [];
+        private List<Button> pressed = [];
+        private int clicked = 0;
 
         public MainWindow()
         {
@@ -33,7 +33,8 @@ namespace memoriajatek
             int selected = (int)char.GetNumericValue(LBox_size.SelectedItem.ToString()![0]);
             Grid_Main.Children.Clear();
 
-            for (int i = 0; i < selected; i++)
+
+            for (int i = 0; i < (selected * selected) / 2; i++)
             {
                 nums.Add(i);
                 nums.Add(i);
@@ -50,7 +51,7 @@ namespace memoriajatek
                 Grid_Main.RowDefinitions.Add(new RowDefinition());
                 Grid_Main.ColumnDefinitions.Add(new ColumnDefinition());
             }
-            int index = -1;
+            int index = 0;
             for (int i = 0; i < selected; i++) // sorok
             {
                 for (int j = 0; j < selected; j++) // oszlopok
@@ -77,10 +78,11 @@ namespace memoriajatek
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            clicked++;
             Button button = (Button)sender;
+            if (pressed.Contains(button)) return;
+            clicked++;
 
-            if (clicked == 3) {
+            if (clicked >= 3) { // should be 2 if fixed
                 clicked = 0;
                 Clear_Buttons();
             }
@@ -94,14 +96,22 @@ namespace memoriajatek
 
         private void Clear_Buttons()
         {
-            if (pressed[0].DataContext != pressed[1].DataContext)
+            if ((int)pressed[0].DataContext != (int)pressed[1].DataContext)
             {
                 foreach (var btn in pressed)
                 {
                     btn.Content = "?";
                 }
-                pressed.Clear();
             }
+            else 
+            { 
+                foreach(var btn in pressed)
+                {
+                    btn.Click -= Button_Click;
+                    btn.Foreground = Brushes.Green;
+                }
+            }
+            pressed.Clear();
         }
     }
 }
