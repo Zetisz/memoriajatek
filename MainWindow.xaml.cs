@@ -26,19 +26,21 @@ namespace memoriajatek
         public MainWindow()
         {
             InitializeComponent();
-            LBox_size.ItemsSource = size;
-            LBox_type.ItemsSource = type;
+            LBoxSize.ItemsSource = size;
+            LBoxType.ItemsSource = type;
         }
 
         private void Btn_Start_Click(object sender, RoutedEventArgs e)
         {
-            if (LBox_size.SelectedItem == null || LBox_type.SelectedItem == null) return;
-            selected = (int)char.GetNumericValue(LBox_size.SelectedItem.ToString()![0]);
-            Grid_Game.Children.Clear();
-            Grid_Game.RowDefinitions.Clear(); // clear grid
-            Grid_Game.ColumnDefinitions.Clear();
+            if (LBoxSize.SelectedItem == null || LBoxType.SelectedItem == null) return;
+            selected = (int)char.GetNumericValue(LBoxSize.SelectedItem.ToString()![0]);
+            GridGame.Children.Clear();
+            GridGame.RowDefinitions.Clear(); // clear grid
+            GridGame.ColumnDefinitions.Clear();
+            data.Clear();
+            tries = 0;
 
-            switch (LBox_type.SelectedItem.ToString())
+            switch (LBoxType.SelectedItem.ToString())
             {
                 case "number": // numbers
                 {
@@ -69,8 +71,8 @@ namespace memoriajatek
         {
             for (int i = 0; i < maxSize; i++)
             {
-                Grid_Game.RowDefinitions.Add(new RowDefinition());
-                Grid_Game.ColumnDefinitions.Add(new ColumnDefinition());
+                GridGame.RowDefinitions.Add(new RowDefinition());
+                GridGame.ColumnDefinitions.Add(new ColumnDefinition());
             }
             int index = 0;
             for (int i = 0; i < maxSize; i++) // rows
@@ -80,7 +82,7 @@ namespace memoriajatek
                     Button btn = new Button // create buttons
                     {
                         Content = "?",
-                        FontSize = 40,
+                        FontSize = 60,
                         FontWeight = FontWeights.Bold,
                         Margin = new Thickness(3),
                         DataContext = data[index++],
@@ -92,7 +94,7 @@ namespace memoriajatek
                     Grid.SetColumn(btn, j);
 
                     btn.Click += Button_Click;
-                    Grid_Game.Children.Add(btn);
+                    GridGame.Children.Add(btn);
                 }
             }
         }
@@ -107,7 +109,7 @@ namespace memoriajatek
 
             if (clicked < 2) return;
             tries++;
-            Lbl_score.Content = tries;
+            LblScore.Content = tries;
 
             clicked = 0;
             await Task.Delay(500);
@@ -126,7 +128,7 @@ namespace memoriajatek
                 found++;
                 if (found >= (selected * selected) / 2) // game over
                 {
-                    Grid_Game.Children.Clear();
+                    GridGame.Children.Clear();
                 }
             }
             else // sets button back to original state
