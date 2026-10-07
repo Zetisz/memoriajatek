@@ -17,6 +17,7 @@ namespace memoriajatek
     public partial class MainWindow : Window
     {
         private List<string> size = ["2 x 2", "4 x 4", "6 x 6"];
+        private List<string> type = ["Number", "Emoji", "Text"];
         private List<int> nums = [];
         private List<Button> pressed = [];
         private int clicked = 0;
@@ -35,6 +36,7 @@ namespace memoriajatek
         {
             InitializeComponent();
             LBox_size.ItemsSource = size;
+            LBox_type.ItemsSource = type;
         }
 
         private void Btn_Start_Click(object sender, RoutedEventArgs e)

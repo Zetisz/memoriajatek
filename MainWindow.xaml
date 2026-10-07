@@ -7,7 +7,8 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid x:Name="Grid_Main">
-        <ListBox x:Name="LBox_size" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="40"></ListBox>
-        <Button x:Name="Btn_Start" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="40" Click="Btn_Start_Click">Start</Button>
+        <ListBox x:Name="LBox_size" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="30"></ListBox>
+        <ListBox x:Name="LBox_type" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="30"></ListBox>  
+        <Button x:Name="Btn_Start" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50" Click="Btn_Start_Click">Start</Button>
     </Grid>
 </Window>
