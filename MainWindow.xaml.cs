@@ -17,11 +17,15 @@ namespace memoriajatek;
 public partial class MainWindow : Window
 {
     private List<string> size = ["2 x 2", "4 x 4", "6 x 6"];
-    private List<string> type = ["number", "emoji", "text"];
+    private List<string> type = ["number", "emoji", "color"];
     private List<string> emojis = ["😀", "😂", "😍", "😎", "🤔", "😴", "😡", "🥳", "😇", "🤩", "🥰", "😘", "😜", "🤪", "🤑", "🤗", "🙄", "😏", "😢", "😭", "😱", "😤", "🤬", "🤯", "😳", "🥺", "😶", "😐", "😑", "🙃", "😅", "😂"];
+    private List<SolidColorBrush> colors = [Brushes.DarkSeaGreen, Brushes.IndianRed, Brushes.BurlyWood, Brushes.CornflowerBlue, Brushes.MediumPurple, Brushes.Orange, Brushes.PaleVioletRed, Brushes.DarkCyan, Brushes.Gold, Brushes.SlateBlue, Brushes.OliveDrab, Brushes.Tomato, Brushes.SteelBlue, Brushes.MediumAquamarine, Brushes.Plum, Brushes.Peru, Brushes.Teal, Brushes.SandyBrown];
     private List<string> data = [];
+    private List<SolidColorBrush> buttonColors = [];
     private List<Button> pressed = [];
     private int clicked, tries, found, selected;
+    private int leastTries = 1000;
+    private bool color;
 
     public MainWindow()
     {
@@ -38,7 +42,10 @@ public partial class MainWindow : Window
         GridGame.RowDefinitions.Clear(); // clear grid
         GridGame.ColumnDefinitions.Clear();
         data.Clear();
+        buttonColors.Clear();
         tries = 0;
+        found = 0;
+        color = false;
 
         switch (LBoxType.SelectedItem.ToString()) // selected mode
         {
@@ -62,8 +69,21 @@ public partial class MainWindow : Window
 
                 break;
             }
+            case "color":
+            {
+                color = true;
+                for (int i = 0; i < (selected * selected) / 2; i++)
+                {
+                    buttonColors.Add(colors[i]);
+                    buttonColors.Add(colors[i]);
+                }
+
+                buttonColors = [.. buttonColors.Shuffle()]; // randomize colors
+                
+                break;
+            }
         }
-        data = [.. data.Shuffle()]; // randomize list
+        if (!color) data = [.. data.Shuffle()]; // randomize list
         Make_Grid(selected);
     }
 
@@ -79,17 +99,23 @@ public partial class MainWindow : Window
         {
             for (int j = 0; j < maxSize; j++) // columns
             {
-                Button btn = new Button // create buttons
+                Button btn = new Button(); // create buttons
+                if (color)
                 {
-                    Content = "?",
-                    FontSize = 60,
-                    FontWeight = FontWeights.Bold,
-                    Margin = new Thickness(3),
-                    DataContext = data[index++],
-                    Background = Brushes.Azure,
-                    Foreground = Brushes.BlueViolet
-                };
-
+                    btn.Background = Brushes.Azure;
+                    btn.DataContext = buttonColors[index++];
+                }
+                else
+                {
+                    btn.Content = "?";
+                    btn.FontSize = 60;
+                    btn.DataContext = data[index++];
+                    btn.FontWeight = FontWeights.Bold;
+                    btn.Background = Brushes.Azure;
+                    btn.Foreground = Brushes.DarkSlateBlue;
+                }
+                
+                btn.Margin = new Thickness(3);
                 Grid.SetRow(btn, i);
                 Grid.SetColumn(btn, j);
 
@@ -104,7 +130,15 @@ public partial class MainWindow : Window
         Button button = (Button)sender;
         if (pressed.Contains(button) || pressed.Count >= 2) return;
         pressed.Add(button);
-        button.Content = button.DataContext;
+        if (color)
+        {
+            button.Background = (SolidColorBrush)button.DataContext;
+            await Task.Delay(300);
+        }
+        else
+        {
+            button.Content = button.DataContext;
+        }
         clicked++;
 
         if (clicked < 2) return;
@@ -123,20 +157,31 @@ public partial class MainWindow : Window
             foreach (var btn in pressed)
             {
                 btn.Click -= Button_Click;
-                btn.Foreground = Brushes.DarkSeaGreen;
+                if (!color) btn.Foreground = Brushes.DarkSeaGreen;
             }
             found++;
             if (found >= (selected * selected) / 2) // game over
             {
                 GridGame.Children.Clear();
-                LblHighScore.Content = "Least tries: " + tries;
+                if (tries < leastTries)
+                {
+                    leastTries = tries;
+                    LblLeastTries.Content = "Least tries: " + leastTries;
+                }
             }
         }
         else // sets buttons back to original state
         {
             foreach (var btn in pressed)
             {
-                btn.Content = "?";
+                if (color)
+                {
+                    btn.Background =  Brushes.Azure;
+                }
+                else
+                {
+                    btn.Content = "?";
+                }
             }
         }
         pressed.Clear();

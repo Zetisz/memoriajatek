@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:memoriajatek"
         mc:Ignorable="d"
-        Title="Simple Memory" Height="700" Width="1200">
+        Title="Pastel Memory" Height="700" Width="1200">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
@@ -19,12 +19,12 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <StackPanel Background="LightYellow">
-                <ListBox x:Name="LBoxSize" FontSize="30" Margin="10"></ListBox>
-                <ListBox x:Name="LBoxType" FontSize="30" Margin="10"></ListBox>
-                <Label x:Name="LblScore" FontSize="60" FontWeight="Bold" HorizontalAlignment="Center" Foreground="DarkSeaGreen"></Label>
+                <ListBox x:Name="LBoxSize" FontSize="30" Margin="10" Background="Honeydew" Foreground="DarkSlateBlue"></ListBox>
+                <ListBox x:Name="LBoxType" FontSize="30" Margin="10" Background="Honeydew" Foreground="DarkSlateBlue"></ListBox>
+                <Label x:Name="LblScore" FontSize="70" FontWeight="Bold" HorizontalAlignment="Center" Foreground="DarkSeaGreen"></Label>
             </StackPanel>
-            <Label Grid.Row="1" x:Name="LblHighScore" FontSize="30" Content="" Margin="20, 0, 0, 0"></Label>
-            <Button Grid.Row="2" FontSize="40" Background="DarkSeaGreen" Click="Btn_Start_Click">Start</Button>
+            <Label Grid.Row="1" x:Name="LblLeastTries" FontSize="30" Foreground="DarkSlateBlue" Content="" Margin="10, 0, 0, 0"></Label>
+            <Button Grid.Row="2" FontSize="40" Background="DarkSeaGreen" Foreground="DarkGreen" Click="Btn_Start_Click">Start</Button>
         </Grid>
     </Grid>
 </Window>
