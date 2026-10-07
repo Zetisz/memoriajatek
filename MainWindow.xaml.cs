@@ -20,6 +20,16 @@ namespace memoriajatek
         private List<int> nums = [];
         private List<Button> pressed = [];
         private int clicked = 0;
+        private int score = 0;
+        private Label Lbl_score = new Label
+        {
+            Content = 0,
+            FontSize = 40,
+            FontWeight= FontWeights.Bold,
+            Margin= new Thickness(3),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Top
+        };
 
         public MainWindow()
         {
@@ -41,7 +51,7 @@ namespace memoriajatek
             }
             nums = [.. nums.Shuffle()];
 
-            Make_Grid(selected);
+            Make_Grid(selected + 1); // for plus grid row
         }
 
         private void Make_Grid(int selected)
@@ -52,9 +62,9 @@ namespace memoriajatek
                 Grid_Main.ColumnDefinitions.Add(new ColumnDefinition());
             }
             int index = 0;
-            for (int i = 0; i < selected; i++) // sorok
+            for (int i = 1; i < selected; i++) // sorok
             {
-                for (int j = 0; j < selected; j++) // oszlopok
+                for (int j = 1; j < selected; j++) // oszlopok
                 {
                     Button btn = new Button
                     {
@@ -74,41 +84,43 @@ namespace memoriajatek
                     Grid_Main.Children.Add(btn);
                 }
             }
+
+
+            Grid_Main.Children.Add(Lbl_score);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
-            if (pressed.Contains(button)) return;
+            if (pressed.Contains(button) || pressed.Count >= 2) return;
+            pressed.Add(button);
+            button.Content = button.DataContext;
             clicked++;
 
-            if (clicked >= 3) { // should be 2 if fixed
+            if (clicked >= 2) {
                 clicked = 0;
+                await Task.Delay(500);
                 Clear_Buttons();
             }
-            else
-            {
-                pressed.Add(button);
-                button.Content = button.DataContext;
-            }
-
         }
 
         private void Clear_Buttons()
         {
-            if ((int)pressed[0].DataContext != (int)pressed[1].DataContext)
+            if ((int)pressed[0].DataContext == (int)pressed[1].DataContext)
+            {
+                foreach (var btn in pressed)
+                {
+                    btn.Click -= Button_Click;
+                    btn.Foreground = Brushes.Green;
+                }
+                score++;
+                Lbl_score.Content = score;
+            }
+            else 
             {
                 foreach (var btn in pressed)
                 {
                     btn.Content = "?";
-                }
-            }
-            else 
-            { 
-                foreach(var btn in pressed)
-                {
-                    btn.Click -= Button_Click;
-                    btn.Foreground = Brushes.Green;
                 }
             }
             pressed.Clear();
