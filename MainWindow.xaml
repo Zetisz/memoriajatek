@@ -12,7 +12,7 @@
             <ColumnDefinition Width="250"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid x:Name="Grid_Game" Grid.Column="0" Background="Azure"></Grid>
-        <Grid x:Name="Grid_Controls" Grid.Column="1">
+        <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
@@ -22,7 +22,7 @@
                 <ListBox x:Name="LBox_type" FontSize="30"></ListBox>
                 <Label x:Name="Lbl_score" FontSize="30" FontWeight="Bold"></Label>
             </StackPanel>
-            <Button x:Name="Btn_Start" Grid.Row="1" FontSize="40" Click="Btn_Start_Click">Start</Button>
+            <Button Grid.Row="1" FontSize="40" Click="Btn_Start_Click">Start</Button>
         </Grid>
     </Grid>
 </Window>

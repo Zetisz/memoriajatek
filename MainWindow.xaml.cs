@@ -21,10 +21,7 @@ namespace memoriajatek
         private List<string> emojis = ["😀", "😂", "😍", "😎", "🤔", "😴", "😡", "🥳", "😇", "🤩", "🥰", "😘", "😜", "🤪", "🤑", "🤗", "🙄", "😏", "😢", "😭", "😱", "😤", "🤬", "🤯", "😳", "🥺", "😶", "😐", "😑", "🙃", "😅", "😂"];
         private List<string> data = [];
         private List<Button> pressed = [];
-        private int clicked = 0;
-        private int tries = 0;
-        private int found = 0;
-        private int selected;
+        private int clicked, tries, found, selected;
 
         public MainWindow()
         {
@@ -38,53 +35,59 @@ namespace memoriajatek
             if (LBox_size.SelectedItem == null || LBox_type.SelectedItem == null) return;
             selected = (int)char.GetNumericValue(LBox_size.SelectedItem.ToString()![0]);
             Grid_Game.Children.Clear();
-            Grid_Game.RowDefinitions.Clear();
+            Grid_Game.RowDefinitions.Clear(); // clear grid
             Grid_Game.ColumnDefinitions.Clear();
 
-            if (LBox_type.SelectedItem.ToString() == "number")
+            switch (LBox_type.SelectedItem.ToString())
             {
-                for (int i = 0; i < (selected * selected) / 2; i++)
+                case "number": // numbers
                 {
-                    data.Add(i.ToString());
-                    data.Add(i.ToString());
+                    for (int i = 0; i < (selected * selected) / 2; i++)
+                    {
+                        data.Add(i.ToString());
+                        data.Add(i.ToString());
+                    }
+
+                    break;
                 }
-                
-            }
-            else if (LBox_type.SelectedItem.ToString() == "emoji")
-            {
-                for (int i = 0; i < (selected * selected) / 2; i++)
+                case "emoji": // emojis
                 {
-                    data.Add(emojis[i]);
-                    data.Add(emojis[i]);
+                    for (int i = 0; i < (selected * selected) / 2; i++)
+                    {
+                        data.Add(emojis[i]);
+                        data.Add(emojis[i]);
+                    }
+
+                    break;
                 }
             }
-            data = [.. data.Shuffle()];
+            data = [.. data.Shuffle()]; // randomize list
             Make_Grid(selected);
         }
 
-        private void Make_Grid(int selected)
+        private void Make_Grid(int maxSize)
         {
-            for (int i = 0; i < selected; i++)
+            for (int i = 0; i < maxSize; i++)
             {
                 Grid_Game.RowDefinitions.Add(new RowDefinition());
                 Grid_Game.ColumnDefinitions.Add(new ColumnDefinition());
             }
             int index = 0;
-            for (int i = 0; i < selected; i++) // sorok
+            for (int i = 0; i < maxSize; i++) // rows
             {
-                for (int j = 0; j < selected; j++) // oszlopok
+                for (int j = 0; j < maxSize; j++) // columns
                 {
-                    Button btn = new Button
+                    Button btn = new Button // create buttons
                     {
                         Content = "?",
                         FontSize = 40,
                         FontWeight = FontWeights.Bold,
                         Margin = new Thickness(3),
-                        DataContext = data[index++]
+                        DataContext = data[index++],
+                        Background = Brushes.Azure,
+                        Foreground = Brushes.BlueViolet
                     };
 
-                    btn.Background = Brushes.Azure;
-                    btn.Foreground = Brushes.BlueViolet;
                     Grid.SetRow(btn, i);
                     Grid.SetColumn(btn, j);
 
@@ -102,19 +105,18 @@ namespace memoriajatek
             button.Content = button.DataContext;
             clicked++;
 
-            if (clicked >= 2) {
-                tries++;
-                Lbl_score.Content = tries;
+            if (clicked < 2) return;
+            tries++;
+            Lbl_score.Content = tries;
 
-                clicked = 0;
-                await Task.Delay(500);
-                Clear_Buttons();
-            }
+            clicked = 0;
+            await Task.Delay(500);
+            Check();
         }
 
-        private void Clear_Buttons()
+        private void Check() // checks if the correct button was pressed
         {
-            if (pressed[0].DataContext == pressed[1].DataContext)
+            if (pressed[0].DataContext == pressed[1].DataContext) // sets color to green & deactivates button
             {
                 foreach (var btn in pressed)
                 {
@@ -122,12 +124,12 @@ namespace memoriajatek
                     btn.Foreground = Brushes.Green;
                 }
                 found++;
-                if (found >= (selected * selected) / 2)
+                if (found >= (selected * selected) / 2) // game over
                 {
                     Grid_Game.Children.Clear();
                 }
             }
-            else 
+            else // sets button back to original state
             {
                 foreach (var btn in pressed)
                 {
