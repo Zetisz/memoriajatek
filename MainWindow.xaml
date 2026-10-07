@@ -5,10 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:memoriajatek"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid x:Name="Grid_Main">
-        <ListBox x:Name="LBox_size" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="30"></ListBox>
-        <ListBox x:Name="LBox_type" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="30"></ListBox>  
-        <Button x:Name="Btn_Start" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50" Click="Btn_Start_Click">Start</Button>
+        Title="MainWindow" Height="700" Width="1200">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="250"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid x:Name="Grid_Game" Grid.Column="0" Background="Azure"></Grid>
+        <Grid x:Name="Grid_Controls" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <StackPanel>
+                <ListBox x:Name="LBox_size" FontSize="30"></ListBox>
+                <ListBox x:Name="LBox_type" FontSize="30"></ListBox>
+                <Label x:Name="Lbl_score" FontSize="30" FontWeight="Bold"></Label>
+            </StackPanel>
+            <Button x:Name="Btn_Start" Grid.Row="1" FontSize="40" Click="Btn_Start_Click">Start</Button>
+        </Grid>
     </Grid>
 </Window>
