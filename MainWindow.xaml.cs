@@ -23,6 +23,8 @@ namespace memoriajatek
         private List<Button> pressed = [];
         private int clicked = 0;
         private int tries = 0;
+        private int found = 0;
+        private int selected;
         private Label Lbl_score = new Label
         {
             Content = 0,
@@ -43,7 +45,7 @@ namespace memoriajatek
         private void Btn_Start_Click(object sender, RoutedEventArgs e)
         {
             if (LBox_size.SelectedItem == null || LBox_type.SelectedItem == null) return;
-            int selected = (int)char.GetNumericValue(LBox_size.SelectedItem.ToString()![0]);
+            selected = (int)char.GetNumericValue(LBox_size.SelectedItem.ToString()![0]);
             Grid_Main.Children.Clear();
 
             if (LBox_type.SelectedItem.ToString() == "Number")
@@ -128,6 +130,11 @@ namespace memoriajatek
                 {
                     btn.Click -= Button_Click;
                     btn.Foreground = Brushes.Green;
+                }
+                found++;
+                if (found >= (selected * selected) / 2)
+                {
+                    Grid_Main.Children.Clear();
                 }
             }
             else 
