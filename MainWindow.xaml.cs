@@ -9,136 +9,136 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace memoriajatek
+namespace memoriajatek;
+
+/// <summary>
+/// Interaction logic for MainWindow.xaml
+/// </summary>
+public partial class MainWindow : Window
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
+    private List<string> size = ["2 x 2", "4 x 4", "6 x 6"];
+    private List<string> type = ["number", "emoji", "text"];
+    private List<string> emojis = ["😀", "😂", "😍", "😎", "🤔", "😴", "😡", "🥳", "😇", "🤩", "🥰", "😘", "😜", "🤪", "🤑", "🤗", "🙄", "😏", "😢", "😭", "😱", "😤", "🤬", "🤯", "😳", "🥺", "😶", "😐", "😑", "🙃", "😅", "😂"];
+    private List<string> data = [];
+    private List<Button> pressed = [];
+    private int clicked, tries, found, selected;
+
+    public MainWindow()
     {
-        private List<string> size = ["2 x 2", "4 x 4", "6 x 6"];
-        private List<string> type = ["number", "emoji", "text"];
-        private List<string> emojis = ["😀", "😂", "😍", "😎", "🤔", "😴", "😡", "🥳", "😇", "🤩", "🥰", "😘", "😜", "🤪", "🤑", "🤗", "🙄", "😏", "😢", "😭", "😱", "😤", "🤬", "🤯", "😳", "🥺", "😶", "😐", "😑", "🙃", "😅", "😂"];
-        private List<string> data = [];
-        private List<Button> pressed = [];
-        private int clicked, tries, found, selected;
+        InitializeComponent();
+        LBoxSize.ItemsSource = size;
+        LBoxType.ItemsSource = type;
+    }
 
-        public MainWindow()
+    private void Btn_Start_Click(object sender, RoutedEventArgs e)
+    {
+        if (LBoxSize.SelectedItem == null || LBoxType.SelectedItem == null) return;
+        selected = (int)char.GetNumericValue(LBoxSize.SelectedItem.ToString()![0]); // selected grid size
+        GridGame.Children.Clear();
+        GridGame.RowDefinitions.Clear(); // clear grid
+        GridGame.ColumnDefinitions.Clear();
+        data.Clear();
+        tries = 0;
+
+        switch (LBoxType.SelectedItem.ToString()) // selected mode
         {
-            InitializeComponent();
-            LBoxSize.ItemsSource = size;
-            LBoxType.ItemsSource = type;
-        }
-
-        private void Btn_Start_Click(object sender, RoutedEventArgs e)
-        {
-            if (LBoxSize.SelectedItem == null || LBoxType.SelectedItem == null) return;
-            selected = (int)char.GetNumericValue(LBoxSize.SelectedItem.ToString()![0]);
-            GridGame.Children.Clear();
-            GridGame.RowDefinitions.Clear(); // clear grid
-            GridGame.ColumnDefinitions.Clear();
-            data.Clear();
-            tries = 0;
-
-            switch (LBoxType.SelectedItem.ToString())
+            case "number":
             {
-                case "number": // numbers
+                for (int i = 0; i < (selected * selected) / 2; i++)
                 {
-                    for (int i = 0; i < (selected * selected) / 2; i++)
-                    {
-                        data.Add(i.ToString());
-                        data.Add(i.ToString());
-                    }
-
-                    break;
+                    data.Add(i.ToString());
+                    data.Add(i.ToString());
                 }
-                case "emoji": // emojis
-                {
-                    for (int i = 0; i < (selected * selected) / 2; i++)
-                    {
-                        data.Add(emojis[i]);
-                        data.Add(emojis[i]);
-                    }
 
-                    break;
-                }
+                break;
             }
-            data = [.. data.Shuffle()]; // randomize list
-            Make_Grid(selected);
-        }
-
-        private void Make_Grid(int maxSize)
-        {
-            for (int i = 0; i < maxSize; i++)
+            case "emoji":
             {
-                GridGame.RowDefinitions.Add(new RowDefinition());
-                GridGame.ColumnDefinitions.Add(new ColumnDefinition());
-            }
-            int index = 0;
-            for (int i = 0; i < maxSize; i++) // rows
-            {
-                for (int j = 0; j < maxSize; j++) // columns
+                for (int i = 0; i < (selected * selected) / 2; i++)
                 {
-                    Button btn = new Button // create buttons
-                    {
-                        Content = "?",
-                        FontSize = 60,
-                        FontWeight = FontWeights.Bold,
-                        Margin = new Thickness(3),
-                        DataContext = data[index++],
-                        Background = Brushes.Azure,
-                        Foreground = Brushes.BlueViolet
-                    };
-
-                    Grid.SetRow(btn, i);
-                    Grid.SetColumn(btn, j);
-
-                    btn.Click += Button_Click;
-                    GridGame.Children.Add(btn);
+                    data.Add(emojis[i]);
+                    data.Add(emojis[i]);
                 }
+
+                break;
             }
         }
+        data = [.. data.Shuffle()]; // randomize list
+        Make_Grid(selected);
+    }
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
+    private void Make_Grid(int maxSize)
+    {
+        for (int i = 0; i < maxSize; i++)
         {
-            Button button = (Button)sender;
-            if (pressed.Contains(button) || pressed.Count >= 2) return;
-            pressed.Add(button);
-            button.Content = button.DataContext;
-            clicked++;
-
-            if (clicked < 2) return;
-            tries++;
-            LblScore.Content = tries;
-
-            clicked = 0;
-            await Task.Delay(500);
-            Check();
+            GridGame.RowDefinitions.Add(new RowDefinition());
+            GridGame.ColumnDefinitions.Add(new ColumnDefinition());
         }
-
-        private void Check() // checks if the correct button was pressed
+        int index = 0;
+        for (int i = 0; i < maxSize; i++) // rows
         {
-            if (pressed[0].DataContext == pressed[1].DataContext) // sets color to green & deactivates button
+            for (int j = 0; j < maxSize; j++) // columns
             {
-                foreach (var btn in pressed)
+                Button btn = new Button // create buttons
                 {
-                    btn.Click -= Button_Click;
-                    btn.Foreground = Brushes.Green;
-                }
-                found++;
-                if (found >= (selected * selected) / 2) // game over
-                {
-                    GridGame.Children.Clear();
-                }
+                    Content = "?",
+                    FontSize = 60,
+                    FontWeight = FontWeights.Bold,
+                    Margin = new Thickness(3),
+                    DataContext = data[index++],
+                    Background = Brushes.Azure,
+                    Foreground = Brushes.BlueViolet
+                };
+
+                Grid.SetRow(btn, i);
+                Grid.SetColumn(btn, j);
+
+                btn.Click += Button_Click;
+                GridGame.Children.Add(btn);
             }
-            else // sets button back to original state
-            {
-                foreach (var btn in pressed)
-                {
-                    btn.Content = "?";
-                }
-            }
-            pressed.Clear();
         }
+    }
+
+    private async void Button_Click(object sender, RoutedEventArgs e)
+    {
+        Button button = (Button)sender;
+        if (pressed.Contains(button) || pressed.Count >= 2) return;
+        pressed.Add(button);
+        button.Content = button.DataContext;
+        clicked++;
+
+        if (clicked < 2) return;
+        tries++;
+        LblScore.Content = tries;
+
+        clicked = 0;
+        await Task.Delay(500); // delay before checking
+        Check();
+    }
+
+    private void Check() // checks if the correct button was pressed
+    {
+        if (pressed[0].DataContext == pressed[1].DataContext)
+        {
+            foreach (var btn in pressed)
+            {
+                btn.Click -= Button_Click;
+                btn.Foreground = Brushes.DarkSeaGreen;
+            }
+            found++;
+            if (found >= (selected * selected) / 2) // game over
+            {
+                GridGame.Children.Clear();
+                LblHighScore.Content = "Least tries: " + tries;
+            }
+        }
+        else // sets buttons back to original state
+        {
+            foreach (var btn in pressed)
+            {
+                btn.Content = "?";
+            }
+        }
+        pressed.Clear();
     }
 }

@@ -12,17 +12,19 @@
             <ColumnDefinition Width="250"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid x:Name="GridGame" Grid.Column="0" Background="Azure"></Grid>
-        <Grid Grid.Column="1">
+        <Grid Grid.Column="1" Background="Honeydew">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <StackPanel>
+            <StackPanel Background="LightYellow">
                 <ListBox x:Name="LBoxSize" FontSize="30" Margin="10"></ListBox>
                 <ListBox x:Name="LBoxType" FontSize="30" Margin="10"></ListBox>
-                <Label x:Name="LblScore" FontSize="60" FontWeight="Bold" HorizontalAlignment="Center"></Label>
+                <Label x:Name="LblScore" FontSize="60" FontWeight="Bold" HorizontalAlignment="Center" Foreground="DarkSeaGreen"></Label>
             </StackPanel>
-            <Button Grid.Row="1" FontSize="40" Click="Btn_Start_Click">Start</Button>
+            <Label Grid.Row="1" x:Name="LblHighScore" FontSize="30" Content="" Margin="20, 0, 0, 0"></Label>
+            <Button Grid.Row="2" FontSize="40" Background="DarkSeaGreen" Click="Btn_Start_Click">Start</Button>
         </Grid>
     </Grid>
 </Window>
