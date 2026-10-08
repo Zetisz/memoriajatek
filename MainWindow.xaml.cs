@@ -20,11 +20,10 @@ public partial class MainWindow : Window
     private readonly string[] type = ["number", "emoji", "color"];
     private readonly string[] emojis = ["😀", "😂", "😍", "😎", "🤔", "😴", "😡", "🥳", "😇", "🤩", "🥰", "😘", "😜", "🤪", "🤑", "🤗", "🙄", "😏", "😢", "😭", "😱", "😤", "🤬", "🤯", "😳", "🥺", "😶", "😐", "😑", "🙃", "😅"];
     private readonly SolidColorBrush[] colors = [Brushes.DarkSeaGreen, Brushes.IndianRed, Brushes.BurlyWood, Brushes.CornflowerBlue, Brushes.MediumPurple, Brushes.Orange, Brushes.PaleVioletRed, Brushes.DarkCyan, Brushes.Gold, Brushes.SlateBlue, Brushes.OliveDrab, Brushes.Tomato, Brushes.SteelBlue, Brushes.MediumAquamarine, Brushes.Plum, Brushes.Peru, Brushes.Teal, Brushes.SandyBrown];
-    private List<SolidColorBrush> buttonColors = [];
     private List<Button> pressed = [];
     private int tries, found, selected;
     private int leastTries = int.MaxValue;
-    private bool color, isChecking ;
+    private bool color, isChecking;
 
     public MainWindow()
     {
@@ -37,15 +36,16 @@ public partial class MainWindow : Window
     {
         if (LBoxSize.SelectedItem == null || LBoxType.SelectedItem == null) return;
         var data = new List<string>();
+        var buttonColors = new List<SolidColorBrush>();
         selected = int.Parse(LBoxSize.SelectedItem.ToString()!.Split(' ')[0]); // selected grid size
         GridGame.Children.Clear();
         GridGame.RowDefinitions.Clear(); // clear grid
         GridGame.ColumnDefinitions.Clear();
-        buttonColors.Clear();
         tries = 0;
         found = 0;
         color = false;
-        int pairCount = selected * selected / 2;
+        
+        var pairCount = selected * selected / 2;
 
         switch (LBoxType.SelectedItem.ToString()) // selected mode
         {
@@ -84,10 +84,10 @@ public partial class MainWindow : Window
             }
         }
         if (!color) data = [.. data.Shuffle()]; // randomize list
-        Make_Grid(selected, data);
+        Make_Grid(selected, data, buttonColors);
     }
 
-    private void Make_Grid(int maxSize, List<string> data)
+    private void Make_Grid(int maxSize, List<string> data , List<SolidColorBrush> buttonColors)
     {
         for (int i = 0; i < maxSize; i++)
         {
@@ -98,8 +98,8 @@ public partial class MainWindow : Window
         {
             for (int j = 0; j < maxSize; j++) // columns
             {
-                int index = i * maxSize + j;
-                Button btn = new Button(); // create buttons
+                var index = i * maxSize + j;
+                var btn = new Button(); // create buttons
                 if (color)
                 {
                     btn.Tag = buttonColors[index];
@@ -127,7 +127,7 @@ public partial class MainWindow : Window
 
     private async void Button_Click(object sender, RoutedEventArgs e)
     {
-        Button button = (Button)sender;
+        var button = (Button)sender;
         if (pressed.Contains(button) || pressed.Count >= 2 || isChecking) return;
         pressed.Add(button);
         
